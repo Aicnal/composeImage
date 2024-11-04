@@ -45,5 +45,6 @@ services:
 
 ## 功能
 
+- [x] 使用GitHub Actions实现了全自动构建Docker Images，兼容了Windows、Linux和macOS
 - [x] 当脚本执行的时候不再对已经存在转码过的图片进行处理，会生成一个`processed_files.txt`文件
 - [ ] 使用硬件加速
