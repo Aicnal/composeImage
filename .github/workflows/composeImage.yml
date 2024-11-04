@@ -2,14 +2,18 @@ name: 构建镜像并推送到Docker Hub
 on: push
 
 jobs: 
-  docker-build-linux:
-    name: Docker build Linux
-    runs-on: ubuntu-latest
+  
+  docker-build-macos:
+    name: Docker build macOS
+    runs-on: macos-latest
 
     steps:
     - name: 读取仓库内容
       uses: actions/checkout@v4
 
+    - name: Setup Docker on macOS
+      uses: douglascamata/setup-docker-macos-action@v1-alpha
+  
     - name: 登陆DockerHub
       uses: docker/login-action@v3
       with:
@@ -21,3 +25,5 @@ jobs:
       with:
         push: true
         tags: aicnal/linux-image-compressor:latest
+
+    
