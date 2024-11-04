@@ -49,6 +49,12 @@ jobs:
     - name: 读取仓库内容
       uses: actions/checkout@v4
 
+    - name: 安装Docker
+      run: |
+        brew install --cask docker
+        open /Application/Docker.app
+        while ! docker system info > /dev/null 2>&1; do sleep 1; done
+
     - name: 登陆DockerHub
       uses: docker/login-action@v3
       with:
