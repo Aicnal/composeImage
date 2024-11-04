@@ -8,7 +8,7 @@ jobs:
 
     steps:
     - name: 读取仓库内容
-      uses: action/checkout@v4
+      uses: actions/checkout@v4
 
     - name: 登陆DockerHub
       uses: docker/login-action@v3
