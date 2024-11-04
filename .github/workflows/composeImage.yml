@@ -16,16 +16,8 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: 构建并推送x86镜像到Docker Hub
+    - name: 构建并且推送到Docker Hub
       uses: docker/build-push-action@v5
       with:
         push: true
-        tags: aicnal/linux-image-compressor:latest-x86
-        platforms: linux/amd64
-
-    - name: 构建并推送arm镜像到Docker Hub
-      uses: docker/build-push-action@v5
-      with:
-        push: true
-        tags: aicnal/linux-image-compressor:latest-arm
-        platforms: linux/arm64
+        tags: aicnal/linux-image-compressor:latest
