@@ -22,25 +22,6 @@ jobs:
         push: true
         tags: aicnal/linux-image-compressor:latest
 
-  docker-build-windows:
-    name: Docker build Windows
-    runs-on: windows-latest
-
-    steps:
-    - name: 读取仓库内容
-      uses: actions/checkout@v4
-
-    - name: 登陆DockerHub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-
-    - name: 构建并且推送到Docker Hub
-      run: |
-        docker build -t aicnal/windows-image-compressor:latest .
-        docker push aicnal/windows-image-compressor:latest
-
   docker-build-macos:
     name: Docker build macOS
     runs-on: macos-latest
@@ -49,17 +30,14 @@ jobs:
     - name: 读取仓库内容
       uses: actions/checkout@v4
 
-    - name: 安装Docker
-      run: |
-        brew install --cask docker
-        open /Application/Docker.app
-        while ! docker system info > /dev/null 2>&1; do sleep 1; done
-
     - name: 登陆DockerHub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
+
+    - name: 验证Docker安装
+      run: docker --version
 
     - name: 构建并且推送到Docker Hub
       uses: docker/build-push-action@v5
