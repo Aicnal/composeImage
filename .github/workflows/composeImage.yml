@@ -1,55 +1,58 @@
-name: 构建 Go 二进制文件
+name: Build and Release Go Binary
 
 on:
   push:
-    branches:
-      - main
+     branches:
+       - 'main'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 检出仓库
+    - name: Check out repository
       uses: actions/checkout@v4
 
-    - name: 缓存 Go 模块
+    - name: Cache Go modules
       uses: actions/cache@v3
       with:
         path: |
           ~/go/pkg/mod
-          ~/.cache/go-build
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
 
-    - name: 设置 Go
+    - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        go-version: '1.20'  # 指定需要的 Go 版本
 
-    - name: 编译二进制文件
+    - name: Build the binary
       run: |
-        go build -v -o composeImage ./...
+        mkdir -p bin
+        go build -v -o bin/composeImage ./...
 
-    - name: 创建 Release
-      if: github.event_name == 'release'
+    - name: Create tar.gz archive
+      run: |
+        tar -czvf bin/composeImage.tar.gz -C bin composeImage
+
+    - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }}
+        tag_name: ${{ github.ref_name }}  # 使用推送的 tag 作为发布的 tag 名称
         release_name: Release ${{ github.ref_name }}
         draft: false
+        prerelease: false
 
-    - name: 上传 Release 资产
-      if: github.event_name == 'release'
+    - name: Upload Release asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./composeImage
-        asset_name: composeImage
-        asset_content_type: application/octet-stream
+        asset_path: bin/composeImage.tar.gz
+        asset_name: composeImage.tar.gz
+        asset_content_type: application/gzip
