@@ -31,3 +31,25 @@ jobs:
     - name: 编译二进制文件
       run: |
         go build -v -o composeImage ./...
+
+        - name: 创建 Release
+        if: github.event_name == 'release'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+  
+      - name: 上传编译文件到 Release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: bin/composeImage.zip
+          asset_name: composeImage.zip
+          asset_content_type: application/zip
