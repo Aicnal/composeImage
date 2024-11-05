@@ -1,23 +1,23 @@
-name: 构建镜像并推送到Docker Hub
-on: push
+name: 构建 Go 二进制文件
 
-jobs: 
-  docker-build-linux:
-    name: Docker build Linux
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 读取仓库内容
+    - name: 检出仓库
       uses: actions/checkout@v4
 
-    - name: 登陆DockerHub
-      uses: docker/login-action@v3
+    - name: 设置 Go
+      uses: actions/setup-go@v4
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_TOKEN }}
+        go-version: '1.20'
 
-    - name: 构建并且推送到Docker Hub
-      uses: docker/build-push-action@v5
-      with:
-        push: true
-        tags: aicnal/linux-image-compressor:latest
+    - name: 编译二进制文件
+      run: |
+        go build -v -o composeImage ./...
