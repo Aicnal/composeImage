@@ -2,8 +2,8 @@ name: Build and Release Go Binary
 
 on:
   push:
-     branches:
-       - 'main'
+    tags:
+      - '*'  # 当推送 tag 时触发
 
 jobs:
   build:
@@ -49,14 +49,14 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Release asset
+    - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: bin/composeImage.tar.gz
-        asset_name: composeImage.Linux.tar.gz
+        asset_path: ./bin/composeImage.tar.gz
+        asset_name: composeImage.tar.gz
         asset_content_type: application/gzip
 
   docker-build-linux:
